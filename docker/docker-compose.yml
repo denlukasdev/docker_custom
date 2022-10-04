@@ -1,0 +1,78 @@
+version: "3"
+
+services:
+  nginx_lara:
+    container_name: nginx_lara
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "8077:80"
+    volumes:
+      - ../server:/var/www/html/server
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/app.conf:/etc/nginx/conf.d/app.conf
+    links:
+      - mysql_lara
+      - php_fpm_lara
+    networks:
+      - network-lara
+
+  php_fpm_lara:
+    container_name: php_fpm_lara
+    build:
+      args:
+        user: lara
+        uid: 1000
+      context: ./images/php
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "9077:9000"
+    volumes:
+      - ../server:/var/www/html/server
+      - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./config/php/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+      - ./config/php/bashrc:/home/lara/.bashrc
+    links:
+      - mysql_lara
+    environment:
+      PHP_IDE_CONFIG: serverName=Docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - network-lara
+
+  mysql_lara:
+    container_name: mysql_lara
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3377:3306"
+    env_file: ./config/mysql/db.env
+    volumes:
+      - ../server/:/var/www/html/server
+      - ./db_volumes/mysql:/var/lib/mysql
+      - ./images/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - network-lara
+
+  phpmyadmin_lara:
+    container_name: phpmyadmin_lara
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8078:80"
+    environment:
+      - PMA_ARBITRARY=1
+    volumes:
+      - /sessions
+    external_links:
+      - mysql_lara
+    depends_on:
+      - mysql_lara
+    networks:
+      - network-lara
+
+networks:
+  network-lara:
+    driver: bridge
