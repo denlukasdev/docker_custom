@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Create folder if doesn't exists
+function createDir {
+  if [ ! -d "$1" ]
+  then
+    mkdir "$1"
+  fi
+}
+
+function replaceStr {
+  sed -i "s/$1/$2/g" "$3"
+}
+
+# Create config files from samples, replace old file if exists
+# $1 - sample file path
+# $2 - target file path
+function copySample {
+
+  if [ -f "$2" ]
+  then
+    rm "$2"
+  fi
+
+  cat "$1" > "$2"
+
+}
+

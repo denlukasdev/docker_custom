@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+# Location of current file
+initLocation=$PWD/$(dirname "$0")
+
+# Env data file
+envData="$initLocation/../init_env"
+
+for row in $(cat "$envData")
+do
+  IFS="=" read -a array <<< $row
+  echo ${array[0]}
+  echo ${array[1]}
+
+done
+
+
+# Included functions
+source "$initLocation/functions"
+
+# list of folders
+dirList="
+../server
+config
+config/mysql
+config/nginx
+config/php
+images
+images/mysql
+images/php
+"
+
+# Create folders if doesn't exists
+for dirPath in $dirList
+do
+  createDir "$initLocation/../$dirPath"
+done
+
+copySample "$initLocation/samples/app.conf.sample" "$initLocation/../config/nginx/app.conf"
+copySample "$initLocation/samples/db.env.sample" "$initLocation/../config/mysql/db.env"
+copySample "$initLocation/samples/init_db.sql.sample" "$initLocation/../images/mysql/init_db.sql"
+copySample "$initLocation/samples/docker-compose.yml.sample" "$initLocation/../docker-compose.yml"
