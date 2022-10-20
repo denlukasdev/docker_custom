@@ -1,24 +1,24 @@
 version: "3"
 
 services:
-  nginx_{$APP_NAME}:
-    container_name: nginx_{$APP_NAME}
+  nginx_test:
+    container_name: nginx_test
     image: nginx:alpine
     restart: unless-stopped
     ports:
-      - "{$PORT_NGINX}:80"
+      - "8066:80"
     volumes:
       - ../server:/var/www/html/server
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx/app.conf:/etc/nginx/conf.d/app.conf
     links:
-      - mysql_{$APP_NAME}
-      - php_fpm_{$APP_NAME}
+      - mysql_test
+      - php_fpm_test
     networks:
-      - network-lara
+      - network-test
 
-  php_fpm_{$APP_NAME}:
-    container_name: php_fpm_{$APP_NAME}
+  php_fpm_test:
+    container_name: php_fpm_test
     build:
       args:
         user: lara
@@ -27,52 +27,52 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "{$PORT_PHP_FPM}:9000"
+      - "9066:9000"
     volumes:
       - ../server:/var/www/html/server
       - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
       - ./config/php/bashrc:/home/lara/.bashrc
     links:
-      - mysql_{$APP_NAME}
+      - mysql_test
     environment:
       PHP_IDE_CONFIG: serverName=Docker
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      - network-lara
+      - network-test
 
-  mysql_{$APP_NAME}:
-    container_name: mysql_{$APP_NAME}
+  mysql_test:
+    container_name: mysql_test
     image: mysql:8.0
     restart: unless-stopped
     ports:
-      - "{$PORT_DB}:3306"
+      - "3366:3306"
     env_file: ./config/mysql/db.env
     volumes:
       - ../server/:/var/www/html/server
       - ./db_volumes/mysql:/var/lib/mysql
       - ./images/mysql:/docker-entrypoint-initdb.d
     networks:
-      - network-lara
+      - network-test
 
-  phpmyadmin_{$APP_NAME}:
-    container_name: phpmyadmin_{$APP_NAME}
+  phpmyadmin_test:
+    container_name: phpmyadmin_test
     image: phpmyadmin/phpmyadmin
     restart: unless-stopped
     ports:
-      - "{$PORT_PHPMYADMIN}:80"
+      - "8067:80"
     environment:
       - PMA_ARBITRARY=1
     volumes:
       - /sessions
     external_links:
-      - mysql_{$APP_NAME}
+      - mysql_test
     depends_on:
-      - mysql_{$APP_NAME}
+      - mysql_test
     networks:
-      - network-lara
+      - network-test
 
 networks:
-  network-lara:
+  network-test:
     driver: bridge

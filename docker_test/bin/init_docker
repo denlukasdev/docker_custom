@@ -7,19 +7,13 @@ initLocation=$PWD/$(dirname "$0")
 # Env data file
 envData="$initLocation/../init_env"
 
-for row in $(cat "$envData")
-do
-  IFS="=" read -a array <<< $row
-  echo ${array[0]}
-  echo ${array[1]}
-
-done
-
+# Save default IFS variable
+IFS_SAVE=$IFS
 
 # Included functions
 source "$initLocation/functions"
 
-# list of folders
+# list of folders related to docker directory
 dirList="
 ../server
 config
@@ -31,13 +25,44 @@ images/mysql
 images/php
 "
 
+# list of variables files
+fileList="
+$initLocation/../config/nginx/app.conf
+$initLocation/../images/mysql/init_db.sql
+$initLocation/../docker-compose.yml
+"
+
+
+
 # Create folders if doesn't exists
 for dirPath in $dirList
 do
   createDir "$initLocation/../$dirPath"
 done
 
+for filePath in $fileList
+do
+  filename=$(basename "$filePath")
+  copySample "$initLocation/samples/$filename.sample" "$filePath"
+done
+
+
+
 copySample "$initLocation/samples/app.conf.sample" "$initLocation/../config/nginx/app.conf"
-copySample "$initLocation/samples/db.env.sample" "$initLocation/../config/mysql/db.env"
 copySample "$initLocation/samples/init_db.sql.sample" "$initLocation/../images/mysql/init_db.sql"
+
+
+rm -rf "$initLocation/../docker-compose.yml"
 copySample "$initLocation/samples/docker-compose.yml.sample" "$initLocation/../docker-compose.yml"
+
+for row in $(cat "$envData")
+do
+  IFS="=" read -a var <<< "$row"
+  if grep -q "${var[0]}" "$initLocation/../docker-compose.yml"
+  then
+    replaceStr "${var[0]}" "${var[1]}" "$initLocation/../docker-compose.yml"
+  fi
+
+done
+
+#replaceStr "APP_NAME" "test" "$initLocation/../docker-compose.yml"

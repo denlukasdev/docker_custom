@@ -8,6 +8,10 @@ function createDir {
   fi
 }
 
+# Replace substring in file
+# $1 - find substring
+# $2 - replace substring
+# $3 - target file path
 function replaceStr {
   sed -i "s/$1/$2/g" "$3"
 }
@@ -19,7 +23,7 @@ function copySample {
 
   if [ -f "$2" ]
   then
-    rm "$2"
+    rm -rf "$2"
   fi
 
   cat "$1" > "$2"
