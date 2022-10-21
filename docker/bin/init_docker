@@ -27,6 +27,8 @@ $initLocation/../images/php
 
 # list of variable files
 fileList="
+$initLocation/config/indoc
+$initLocation/config/dump_setup
 $initLocation/../config/nginx/app.conf
 $initLocation/../config/mysql/db.env
 $initLocation/../images/mysql/init_db.sql
