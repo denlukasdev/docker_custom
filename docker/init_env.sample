@@ -1,10 +1,13 @@
-# Lower case
+# Use lower case
 APP_NAME=test
 BASE_URL=test-app.loc
 
+# Path to entry point from application root folder
+# Ex: for Laravel - public
 ENTRY_POINT=public
 
-PHP_VERSION=8.1
+PHP_VERSION=7.4
+
 
 PORT_NGINX=8066
 PORT_PHP_FPM=9066
