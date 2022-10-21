@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker exec -i mysql_APP_NAME mysql -uDB_USER -pDB_PASSWORD DB_DATABASE < "$1"

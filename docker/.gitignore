@@ -1,4 +1,8 @@
-volumes/*
+bin/samples/dump_setup
+bin/samples/indoc
+db_volumes/
+config/nginx/app.conf
 config/mysql/db.env
 images/mysql/init_db.sql
+docker-compose.yml
 .idea/

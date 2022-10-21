@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker exec -it  php_fpm_APP_NAME bash
+
+

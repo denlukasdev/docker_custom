@@ -1,4 +1,0 @@
-volumes/*
-config/mysql/db.env
-images/mysql/init_db.sql
-.idea/

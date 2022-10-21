@@ -3,14 +3,13 @@ BASE_URL=test-app.loc
 
 ENTRY_POINT=public
 
-PHP_VERSION=7.4
+PHP_VERSION=8.1
 
 PORT_NGINX=8066
 PORT_PHP_FPM=9066
 PORT_DB=3366
 PORT_PHPMYADMIN=8067
 
-DB_HOST=mysql_project_name
 DB_ROOT_PASSWORD=db_root_password
 DB_DATABASE=db_name
 DB_USER=db_user_name

@@ -1,0 +1,58 @@
+#!/bin/bash
+set -e
+
+# Location of current file
+initLocation=$PWD/$(dirname "$0")
+
+# Env data file
+envData="$initLocation/../init_env"
+
+# Save default IFS variable
+IFS_SAVE=$IFS
+
+# Included functions
+source "$initLocation/functions"
+
+# list of folders related to docker directory
+dirList="
+$initLocation/../../server
+$initLocation/../config
+$initLocation/../config/mysql
+$initLocation/../config/nginx
+$initLocation/../config/php
+$initLocation/../images
+$initLocation/../images/mysql
+$initLocation/../images/php
+"
+
+# list of variable files
+fileList="
+$initLocation/../config/nginx/app.conf
+$initLocation/../config/mysql/db.env
+$initLocation/../images/mysql/init_db.sql
+$initLocation/../images/php/Dockerfile
+$initLocation/../docker-compose.yml
+"
+
+
+
+# Create folders if doesn't exists
+for dirPath in $dirList
+do
+  createDir "$dirPath"
+done
+
+for filePath in $fileList
+do
+  filename=$(basename "$filePath")
+  copySample "$initLocation/samples/$filename.sample" "$filePath"
+  for row in $(cat "$envData")
+  do
+    IFS="=" read -a var <<< "$row"
+    if grep -q "${var[0]}" "$filePath"
+    then
+      replaceStr "${var[0]}" "${var[1]}" "$filePath"
+    fi
+
+  done
+done
