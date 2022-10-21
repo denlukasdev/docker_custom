@@ -13,6 +13,14 @@ IFS_SAVE=$IFS
 # Included functions
 source "$initLocation/functions"
 
+# Check is init_env file exists
+if [ ! -f "$envData" ]
+then
+  echo "Please copy 'init_env.sample' as 'init_env' and set variables"
+  exit
+fi
+
+
 # list of folders related to docker directory
 dirList="
 $initLocation/../../server
@@ -27,8 +35,8 @@ $initLocation/../images/php
 
 # list of variable files
 fileList="
-$initLocation/config/indoc
-$initLocation/config/dump_setup
+$initLocation/indoc
+$initLocation/dump_setup
 $initLocation/../config/nginx/app.conf
 $initLocation/../config/mysql/db.env
 $initLocation/../images/mysql/init_db.sql
@@ -36,25 +44,36 @@ $initLocation/../images/php/Dockerfile
 $initLocation/../docker-compose.yml
 "
 
-
-
-# Create folders if doesn't exists
+# Create folders if doesn't exists loop
 for dirPath in $dirList
 do
   createDir "$dirPath"
 done
 
+# Copy sample files and replace variables
+IFS=$'\n'
 for filePath in $fileList
 do
+  # Get file name from file path
   filename=$(basename "$filePath")
+  # Copy sample file
   copySample "$initLocation/samples/$filename.sample" "$filePath"
+  # Replace variables in file loop
   for row in $(cat "$envData")
   do
+    # Exclude comments
+    if [ "${row:0:1}" == '#' ]
+    then
+      continue
+    fi
+    # Variable row to array
     IFS="=" read -a var <<< "$row"
+    # Check is file contain variable
     if grep -q "${var[0]}" "$filePath"
     then
+      # Replace variable
       replaceStr "${var[0]}" "${var[1]}" "$filePath"
     fi
-
   done
 done
+IFS="$IFS_SAVE"

@@ -1,5 +1,5 @@
-bin/samples/dump_setup
-bin/samples/indoc
+bin/dump_setup
+bin/indoc
 db_volumes/
 config/nginx/app.conf
 config/mysql/db.env
