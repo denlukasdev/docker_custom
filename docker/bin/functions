@@ -2,8 +2,7 @@
 
 # Create folder if doesn't exists
 function createDir {
-  if [ ! -d "$1" ]
-  then
+  if [ ! -d "$1" ]; then
     mkdir "$1"
   fi
 }
@@ -20,10 +19,8 @@ function replaceStr {
 # $1 - sample file path
 # $2 - target file path
 function copySample {
-  if [ -f "$2" ]
-  then
+  if [ -f "$2" ]; then
     rm -rf "$2"
   fi
-  cat "$1" > "$2"
+  cat "$1" >"$2"
 }
-
