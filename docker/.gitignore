@@ -4,6 +4,7 @@ db_volumes/
 config/nginx/app.conf
 config/mysql/db.env
 images/mysql/init_db.sql
+images/php/Dockerfile
 docker-compose.yml
 init_env
 .idea/
