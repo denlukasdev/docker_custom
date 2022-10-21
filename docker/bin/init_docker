@@ -70,3 +70,4 @@ for filePath in $fileList; do
   done
 done
 IFS="$IFS_SAVE"
+chmod 755 $initLocation/*
